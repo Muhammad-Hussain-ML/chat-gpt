@@ -1,6 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
-from google.generativeai.types import Part
+import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 
