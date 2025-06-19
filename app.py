@@ -50,13 +50,15 @@ if user_input:
 
     # Build the prompt including chat history (with truncation)
     prompt = ""
-    for turn in st.session_state.chat_history[-MAX_HISTORY_LENGTH:]:  # Limit history
-        prompt += f"{turn['role']}: {''.join(turn['parts'])}\n"
-    prompt += ""
+    for turn in st.session_state.chat_history[-MAX_HISTORY_LENGTH:]: 
+        role = "User" if turn["role"] == "user" else "Assistant"
+        content = "\n".join(turn["parts"]).strip()
+        prompt += f"{role}:\n{content}\n\n"
+    prompt += "Assistant:\n"
 
-    st.write(f"prompt : {prompt}")
     with st.chat_message("model"):
         try:
+            st.write(f"prompt : {prompt}")
             response = chat.send_message(content=prompt, stream=True)
             full_response = ""
             placeholder = st.empty()
