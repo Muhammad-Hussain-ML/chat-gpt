@@ -24,7 +24,7 @@ selected_model = st.sidebar.selectbox("🧠 Choose a Gemini model:", model_optio
 temperature = st.sidebar.slider("Temperature", min_value=0.0, max_value=1.0, value=0.5, step=0.1)
 
 # --- Chat Memory and Session Management ---
-MAX_HISTORY_LENGTH = 20  # Adjust as needed
+MAX_HISTORY_LENGTH = 30  # Adjust as needed
 if "chat" not in st.session_state or st.session_state.get("last_model") != selected_model:
     st.session_state.chat = genai.GenerativeModel(model_name=selected_model, generation_config={"temperature": temperature}).start_chat()
     st.session_state.last_model = selected_model
@@ -54,6 +54,7 @@ if user_input:
         prompt += f"{turn['role']}: {''.join(turn['parts'])}\n"
     prompt += ""
 
+    st.write(f"prompt : {prompt}")
     with st.chat_message("model"):
         try:
             response = chat.send_message(content=prompt, stream=True)
