@@ -20,7 +20,7 @@ st.title("💬 Gemini Chat Interface")
 
 # --- Model and Temperature Selection ---
 # Corrected and updated model names for Gemini 1.5 and older stable models
-model_options = ["gemini-1.5-pro", "gemini-1.5-flash", "gemini-pro", "gemini-flash"]
+model_options = ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-1.5-pro", "gemini-1.5-flash"]
 selected_model = st.sidebar.selectbox("🧠 Choose a Gemini model:", model_options)
 temperature = st.sidebar.slider("Temperature", min_value=0.0, max_value=1.0, value=0.5, step=0.1)
 
