@@ -66,7 +66,7 @@ if user_input:
     # Send message and display streaming response
     with st.chat_message("model"):
         try:
-            response = chat.send_message(contents=contents, stream=True)
+            response = chat.send_message(content=contents, stream=True)
             output = ""
             for chunk in response:
                 output += chunk.text
