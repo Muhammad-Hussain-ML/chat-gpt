@@ -65,8 +65,6 @@ if user_input:
             placeholder.markdown(full_response)
             st.session_state.chat_history.append({"role": "model", "parts": [full_response]})
 
-        except genai.errors.APIError as e:
-            st.error(f"API Error: {e}")  # More specific error handling
         except Exception as e:
             st.error(f"An unexpected error occurred: {e}")
 
