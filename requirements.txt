@@ -2,3 +2,4 @@ streamlit>=1.34.0
 google-generativeai>=0.4.1
 python-dotenv>=1.0.1
 PyPDF2
+pytesseract>=0.3.10
