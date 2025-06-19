@@ -24,8 +24,10 @@ st.title("💬 Gemini Chat Interface")
 
 # --- Model Selection ---
 model_options = [
-    "gemini-pro",  # Update with available models
-    "gemini-ultra" # Include 'ultra' if available and you want to use it
+    "gemini-2.5-pro",
+    "gemini-2.5-flash",
+    "gemini-1.5-pro",
+    "gemini-1.5-flash"
 ]
 selected_model = st.sidebar.selectbox("🧠 Choose a Gemini model:", model_options)
 
