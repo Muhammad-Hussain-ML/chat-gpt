@@ -47,6 +47,7 @@ for msg in st.session_state.chat_history:
     with st.chat_message(msg["role"]):
         st.markdown("".join(msg["parts"]))
 
+st.write(st.session_state.chat_history)
 # --- Handle user input ---
 user_input = st.chat_input("Ask something...")
 if user_input:
@@ -68,10 +69,11 @@ if user_input:
         try:
             response = chat.send_message(content=contents, stream=True)
             output = ""
+            placeholder = st.empty()
             for chunk in response:
                 output += chunk.text
-                st.markdown(output + "▌")  # typing effect
-            st.markdown(output)
+                placeholder.markdown(output + "▌")  # typing effect
+            placeholder.markdown(output)
             st.session_state.chat_history.append({"role": "model", "parts": [output]})
         except Exception as e:
             st.error(f"Error: {e}")
