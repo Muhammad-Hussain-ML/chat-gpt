@@ -98,10 +98,5 @@ if user_input:
             # st.session_state.chat_history.pop() 
 
 
-# --- Clear Chat History button ---
-if st.button("Clear Chat History"):
-    st.session_state.chat_history = []
-    st.experimental_rerun() # Rerun to clear the displayed messages immediately
-
 
 
