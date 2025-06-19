@@ -26,7 +26,7 @@ temperature = st.sidebar.slider("Temperature", min_value=0.0, max_value=1.0, val
 # --- Chat Memory and Session Management ---
 MAX_HISTORY_LENGTH = 20  # Adjust as needed
 if "chat" not in st.session_state or st.session_state.get("last_model") != selected_model:
-    st.session_state.chat = genai.GenerativeModel(model_name=selected_model).start_chat()
+    st.session_state.chat = genai.GenerativeModel(model_name=selected_model, generation_config={"temperature": temperature}).start_chat()
     st.session_state.last_model = selected_model
 
 if "chat_history" not in st.session_state:
@@ -56,7 +56,7 @@ if user_input:
 
     with st.chat_message("model"):
         try:
-            response = chat.send_message(content=prompt, temperature=temperature, stream=True)
+            response = chat.send_message(content=prompt, stream=True)
             full_response = ""
             placeholder = st.empty()
             for chunk in response:
