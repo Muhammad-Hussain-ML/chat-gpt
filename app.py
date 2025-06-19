@@ -52,7 +52,7 @@ if user_input:
     prompt = ""
     for turn in st.session_state.chat_history[-MAX_HISTORY_LENGTH:]:  # Limit history
         prompt += f"{turn['role']}: {''.join(turn['parts'])}\n"
-    prompt += "model:"
+    prompt += ""
 
     with st.chat_message("model"):
         try:
