@@ -2,14 +2,10 @@ import streamlit as st
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
-import PyPDF2
-from PIL import Image
-import pytesseract  # For OCR (Image to Text)
-
 
 # --- Load environment variables ---
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")  # Make sure your API key is set
+api_key = os.getenv("GEMINI_API_KEY")
 
 # --- Configure Google Generative AI ---
 if not api_key:
@@ -22,54 +18,26 @@ genai.configure(api_key=api_key)
 st.set_page_config(page_title="Gemini Chat", page_icon="💬", layout="wide")
 st.title("💬 Gemini Chat Interface")
 
-# --- Model Selection ---
-model_options = [
-    "gemini-2.5-pro",
-    "gemini-2.5-flash",
-    "gemini-1.5-pro",
-    "gemini-1.5-flash"
-]
+# --- Model and Temperature Selection ---
+model_options = ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-1.5-pro", "gemini-1.5-flash"]
 selected_model = st.sidebar.selectbox("🧠 Choose a Gemini model:", model_options)
+temperature = st.sidebar.slider("Temperature", min_value=0.0, max_value=1.0, value=0.5, step=0.1)
 
 # --- Chat Memory and Session Management ---
+MAX_HISTORY_LENGTH = 20  # Adjust as needed
 if "chat" not in st.session_state or st.session_state.get("last_model") != selected_model:
     st.session_state.chat = genai.GenerativeModel(model_name=selected_model).start_chat()
-    st.session_state.last_model = selected_model 
+    st.session_state.last_model = selected_model
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
 
-# --- File Upload ---
-uploaded_file = st.file_uploader("📎 Upload file (optional)", type=["jpg", "jpeg", "png", "pdf", "txt"])
-file_content = None  # Store the processed file content
-
-if uploaded_file:
-    file_type = uploaded_file.type
-    if file_type == "application/pdf":
-        pdf_reader = PyPDF2.PdfReader(uploaded_file)
-        file_content = ""
-        for page in pdf_reader.pages:
-            file_content += page.extract_text()
-    elif file_type.startswith("image/"):  # Handle images (OCR)
-        try:
-            image = Image.open(uploaded_file)
-            file_content = pytesseract.image_to_string(image)
-        except Exception as e: # Handle potential OCR errors
-            st.error(f"OCR Error: {e}")
-            file_content = None # So it doesn't try to send bad data to Gemini
-    elif file_type == "text/plain":
-        file_content = uploaded_file.read().decode("utf-8")  # For text files
-    else:
-        st.warning("Unsupported file type. Please upload a PDF, image, or text file.")
-
-    if file_content:
-        st.success(f"Uploaded: {uploaded_file.name}")
-
 # --- Show chat history ---
 for msg in st.session_state.chat_history:
     with st.chat_message(msg["role"]):
         st.markdown("".join(msg["parts"]))
+
 
 # --- Handle user input ---
 user_input = st.chat_input("Ask something...")
@@ -80,13 +48,15 @@ if user_input:
 
     chat = st.session_state.chat
 
-    contents = [user_input]
-    if file_content:
-        contents.append(file_content) 
+    # Build the prompt including chat history (with truncation)
+    prompt = ""
+    for turn in st.session_state.chat_history[-MAX_HISTORY_LENGTH:]:  # Limit history
+        prompt += f"{turn['role']}: {''.join(turn['parts'])}\n"
+    prompt += "model:"
 
     with st.chat_message("model"):
         try:
-            response = chat.send_message(content=contents, stream=True)
+            response = chat.send_message(content=prompt, temperature=temperature, stream=True)
             full_response = ""
             placeholder = st.empty()
             for chunk in response:
@@ -94,23 +64,135 @@ if user_input:
                 placeholder.markdown(full_response + "▌")
             placeholder.markdown(full_response)
             st.session_state.chat_history.append({"role": "model", "parts": [full_response]})
+
         except genai.errors.APIError as e:
-            st.error(f"API Error: {e}")
+            st.error(f"API Error: {e}")  # More specific error handling
         except Exception as e:
             st.error(f"An unexpected error occurred: {e}")
 
 
+# --- Clear Chat History button ---
+if st.button("Clear Chat History"):
+    st.session_state.chat_history = []
+    st.session_state.chat = genai.GenerativeModel(model_name=selected_model).start_chat()
 
-# --- Clear File and Chat History buttons ---
-col1, col2 = st.columns(2)
-with col1:
-    if st.button("Clear Uploaded File"):
-        uploaded_file = None
-        file_content = None
-with col2:
-    if st.button("Clear Chat History"):
-        st.session_state.chat_history = []
-        st.session_state.chat = genai.GenerativeModel(model_name=selected_model).start_chat()
+
+
+
+
+# import streamlit as st
+# import google.generativeai as genai
+# import os
+# from dotenv import load_dotenv
+# import PyPDF2
+# from PIL import Image
+# import pytesseract  # For OCR (Image to Text)
+
+
+# # --- Load environment variables ---
+# load_dotenv()
+# api_key = os.getenv("GEMINI_API_KEY")  # Make sure your API key is set
+
+# # --- Configure Google Generative AI ---
+# if not api_key:
+#     st.error("GEMINI_API_KEY not found in environment. Please set it in your .env file.")
+#     st.stop()
+
+# genai.configure(api_key=api_key)
+
+# # --- Streamlit UI setup ---
+# st.set_page_config(page_title="Gemini Chat", page_icon="💬", layout="wide")
+# st.title("💬 Gemini Chat Interface")
+
+# # --- Model Selection ---
+# model_options = [
+#     "gemini-2.5-pro",
+#     "gemini-2.5-flash",
+#     "gemini-1.5-pro",
+#     "gemini-1.5-flash"
+# ]
+# selected_model = st.sidebar.selectbox("🧠 Choose a Gemini model:", model_options)
+
+# # --- Chat Memory and Session Management ---
+# if "chat" not in st.session_state or st.session_state.get("last_model") != selected_model:
+#     st.session_state.chat = genai.GenerativeModel(model_name=selected_model).start_chat()
+#     st.session_state.last_model = selected_model 
+
+# if "chat_history" not in st.session_state:
+#     st.session_state.chat_history = []
+
+
+# # --- File Upload ---
+# uploaded_file = st.file_uploader("📎 Upload file (optional)", type=["jpg", "jpeg", "png", "pdf", "txt"])
+# file_content = None  # Store the processed file content
+
+# if uploaded_file:
+#     file_type = uploaded_file.type
+#     if file_type == "application/pdf":
+#         pdf_reader = PyPDF2.PdfReader(uploaded_file)
+#         file_content = ""
+#         for page in pdf_reader.pages:
+#             file_content += page.extract_text()
+#     elif file_type.startswith("image/"):  # Handle images (OCR)
+#         try:
+#             image = Image.open(uploaded_file)
+#             file_content = pytesseract.image_to_string(image)
+#         except Exception as e: # Handle potential OCR errors
+#             st.error(f"OCR Error: {e}")
+#             file_content = None # So it doesn't try to send bad data to Gemini
+#     elif file_type == "text/plain":
+#         file_content = uploaded_file.read().decode("utf-8")  # For text files
+#     else:
+#         st.warning("Unsupported file type. Please upload a PDF, image, or text file.")
+
+#     if file_content:
+#         st.success(f"Uploaded: {uploaded_file.name}")
+
+# # --- Show chat history ---
+# for msg in st.session_state.chat_history:
+#     with st.chat_message(msg["role"]):
+#         st.markdown("".join(msg["parts"]))
+
+# # --- Handle user input ---
+# user_input = st.chat_input("Ask something...")
+# if user_input:
+#     st.session_state.chat_history.append({"role": "user", "parts": [user_input]})
+#     with st.chat_message("user"):
+#         st.markdown(user_input)
+
+#     chat = st.session_state.chat
+
+#     contents = [user_input]
+#     if file_content:
+#         contents.append(file_content) 
+
+#     with st.chat_message("model"):
+#         try:
+#             response = chat.send_message(content=contents, stream=True)
+#             full_response = ""
+#             placeholder = st.empty()
+#             for chunk in response:
+#                 full_response += chunk.text
+#                 placeholder.markdown(full_response + "▌")
+#             placeholder.markdown(full_response)
+#             st.session_state.chat_history.append({"role": "model", "parts": [full_response]})
+#         except genai.errors.APIError as e:
+#             st.error(f"API Error: {e}")
+#         except Exception as e:
+#             st.error(f"An unexpected error occurred: {e}")
+
+
+
+# # --- Clear File and Chat History buttons ---
+# col1, col2 = st.columns(2)
+# with col1:
+#     if st.button("Clear Uploaded File"):
+#         uploaded_file = None
+#         file_content = None
+# with col2:
+#     if st.button("Clear Chat History"):
+#         st.session_state.chat_history = []
+#         st.session_state.chat = genai.GenerativeModel(model_name=selected_model).start_chat()
 
 
 
