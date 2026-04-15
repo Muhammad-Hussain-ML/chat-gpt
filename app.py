@@ -32,7 +32,7 @@ st.title("💬 Gemini Chat Interface")
 # ---------------------------------------------------------------------------
 # Sidebar — model options grouped by family
 # ---------------------------------------------------------------------------
-st.sidebar.header("⚙️ Settings")
+st.sidebar.header("⚙️ Settings222")
 
 STABLE_MODELS = {
     "Gemini 2.5 Pro (stable)":         "gemini-2.5-pro",
