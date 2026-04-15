@@ -38,6 +38,36 @@ with st.sidebar:
     api_key = st.text_input("Gemini API Key", value=env_key, type="password")
     
     st.divider()
+    model_map = {
+        # Gemini 3 Series (Latest Generation)
+        "Gemini 3.1 Pro (Versatile & Powerful)": "gemini-3.1-pro",
+        "Gemini 3 Flash (Fast & Efficient)": "gemini-3-flash",
+        "Gemini 3.1 Flash-Lite (Ultra-Fast, Limited Capabilities)": "gemini-3.1-flash-lite",
+        "Gemini 3 Pro Image (aka Nano Banana Pro - Image Focused)": "gemini-3-pro-image",  # Check if still valid
+        "Gemini 3.1 Flash Image (aka Nano Banana 2 - Image Focused)": "gemini-3.1-flash-image", # Check if still valid
+        "Gemini 3.1 Flash Live (Audio Processing)": "gemini-3.1-flash-live",
+    
+        # Gemini 2.5 Series (Previous Generation)
+        "Gemini 2.5 Pro (General Purpose)": "gemini-2.5-pro",
+        "Gemini 2.5 Flash (Fast)": "gemini-2.5-flash",
+        "Gemini 2.5 Flash-Lite (Ultra-Fast, Limited)": "gemini-2.5-flash-lite",
+        "Gemini 2.5 Flash Image (aka Nano Banana - Image Focused)": "gemini-2.5-flash-image", # Check if still valid
+        "Gemini 2.5 Flash Live Preview (Audio Processing Preview)": "gemini-2.5-flash-live-preview",
+        "Gemini 2.5 Flash TTS Preview (Text-to-Speech Preview)": "gemini-2.5-flash-tts-preview",
+        "Gemini 2.5 Pro TTS Preview (Text-to-Speech Preview)": "gemini-2.5-pro-tts-preview",
+    
+        # Gemini 2.0 Series (Older Generation - May Be Deprecated)
+        "Gemini 2.0 Pro (Older Pro Model)": "gemini-2.0-pro",  # Check if still available
+        "Gemini 2.0 Flash (Older Flash Model)": "gemini-2.0-flash",  # Check if still available
+        "Gemini 2.0 Flash-Lite (Older Flash-Lite Model)": "gemini-2.0-flash-lite", # Check if still available
+    
+        # Gemini 1.x Series (Legacy - Likely Deprecated)
+        "Gemini 1.5 Pro (Mid-Range Capabilities)": "gemini-1.5-pro", # Check if still available
+        "Gemini 1.5 Flash (Fast, Lower Quality)": "gemini-1.5-flash", # Check if still available
+        "Gemini 1.0 Ultra (Highest Quality - Limited Access)": "gemini-1.0-ultra", # Check if still available; may require special access
+        "Gemini 1.0 Nano (On-Device Model)": "gemini-1.0-nano", # Check if still available; designed for mobile devices
+    }
+
     
     # Model Selection (Current 2025 Stable/Preview Models)
     model_map = {
