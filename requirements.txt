@@ -1,5 +1,13 @@
+# Web Framework
 streamlit>=1.34.0
-google-generativeai>=0.4.1
+
+# Gemini AI SDK (The New Migration)
+google-genai
+
+# Environment and Configuration
 python-dotenv>=1.0.1
-PyPDF2
+
+# PDF and OCR Processing
+pypdf>=4.0.0
 pytesseract>=0.3.10
+Pillow>=10.0.0
