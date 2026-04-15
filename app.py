@@ -120,9 +120,15 @@ if prompt := st.chat_input("Ask me anything..."):
                     full_response += chunk.text
                     response_placeholder.markdown(full_response + "▌")
                 
-                # 2. Capture Grounding/Search Metadata (if any)
-                if chunk.grounding_metadata:
-                    grounding_metadata = chunk.grounding_metadata
+                # 2. Safely capture Grounding/Search Metadata
+                # This only exists if the model actually performed a search
+                metadata = getattr(chunk, 'grounding_metadata', None)
+                if metadata:
+                    grounding_metadata = metadata
+                
+                # # 2. Capture Grounding/Search Metadata (if any)
+                # if chunk.grounding_metadata:
+                #     grounding_metadata = chunk.grounding_metadata
 
             # Final Text Update
             response_placeholder.markdown(full_response)
