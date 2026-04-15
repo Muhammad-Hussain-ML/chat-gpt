@@ -69,12 +69,12 @@ with st.sidebar:
     }
 
     
-    # Model Selection (Current 2025 Stable/Preview Models)
-    model_map = {
-        "Gemini 2.0 Flash (Fastest)": "gemini-2.0-flash",
-        "Gemini 2.0 Pro (Most Powerful)": "gemini-2.0-pro-exp-02-05",
-        "Gemini 1.5 Pro (Stable)": "gemini-1.5-pro",
-    }
+    # # Model Selection (Current 2025 Stable/Preview Models)
+    # model_map = {
+    #     "Gemini 2.0 Flash (Fastest)": "gemini-2.0-flash",
+    #     "Gemini 2.0 Pro (Most Powerful)": "gemini-2.0-pro-exp-02-05",
+    #     "Gemini 1.5 Pro (Stable)": "gemini-1.5-pro",
+    # }
     selected_label = st.selectbox("Brain Model", options=list(model_map.keys()))
     selected_model = model_map[selected_label]
     
